@@ -49,10 +49,7 @@ enum Status {
 }
 
 enum Priority {
-  LOW
-  MEDIUM
-  HIGH
-  EMERGENCY
+Card Description
 }
 
 model Checklist {
