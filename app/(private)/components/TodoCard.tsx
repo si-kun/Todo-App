@@ -44,8 +44,8 @@ const TodoCard = ({ todo }: TodoCardProps) => {
 
   return (
     <Card className="gap-3">
-      <CardHeader>
-        <div className="flex justify-between items-center">
+      <CardHeader className="flex flex-col">
+        <div className="flex justify-between items-center w-full">
           <CardTitle className="flex items-center gap-2">
             
             {todo.completed && <BadgeCheck className="text-blue-500" />}{todo.title}</CardTitle>
@@ -58,9 +58,9 @@ const TodoCard = ({ todo }: TodoCardProps) => {
           </span>
         </div>
         {todo.summary && (
-          <CardDescription className="text-sm">
-            {todo.summary.length < 15
-              ? todo.summary.slice(0, 15) + "..."
+          <CardDescription className="text-xs">
+            {todo.summary.length >= 12
+              ? todo.summary.slice(0, 12) + "..."
               : todo.summary}
           </CardDescription>
         )}

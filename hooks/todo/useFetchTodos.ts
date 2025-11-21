@@ -5,7 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export const useFetchTodos = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [todos, setTodos] = useAtom(todosAtom);
 
   const fetchTodos = async () => {
@@ -14,7 +14,6 @@ export const useFetchTodos = () => {
       const result = await getAllTodo();
 
       if (result.success) {
-        toast.success(result.message);
         setTodos(result.data);
       }
     } catch (error) {

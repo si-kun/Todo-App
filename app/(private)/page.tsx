@@ -19,6 +19,7 @@ import {
 import { Search } from "lucide-react";
 import SelectYearMonth from "@/components/common/date/SelectYearMonth";
 import { Input } from "@/components/ui/input";
+import TodoSheet from "@/components/todo/TodoSheet";
 
 export interface FilterOption {
   label: string;
@@ -29,6 +30,8 @@ export type FilterLabelOptions = Record<string, FilterOption[]>;
 
 export default function Home() {
   const { fetchTodos, loading, todos } = useFetchTodos();
+
+  const [accordionValue, setAccordionValue] = useState<string>("");
 
   const [statusFilter, setStatusFilter] = useState<Status | "ALL">("ALL");
   const [priorityFilter, setPriorityFilter] = useState<Priority | "ALL">("ALL");
@@ -154,28 +157,40 @@ export default function Home() {
       { label: "未完了", value: "false" },
     ],
   };
+
+  const TODO_TABS = [
+    { value: "today", label: "今日のTodo", data: todayTodo },
+    { value: "in_progress", label: "実行中のTodo", data: InProgressTodo },
+    { value: "todos", label: "全てのTodo", data: todos },
+  ];
   return (
     <div>
       <Tabs defaultValue="today">
         <div className="flex flex-col sticky top-16 z-10 bg-slate-50 -mx-4 -mt-4 p-4">
-          <TabsList className="">
-            <TabsTrigger value="today">今日のTodo</TabsTrigger>
-            <TabsTrigger value="in_progress">実行中のTodo</TabsTrigger>
-            <TabsTrigger value="todos">全てのTodo</TabsTrigger>
+          <TabsList>
+            {TODO_TABS.map((tab) => (
+              <TabsTrigger key={tab.value} value={tab.value}>
+                {tab.label}
+              </TabsTrigger>
+            ))}
           </TabsList>
-          <Accordion type="single" collapsible>
+          <Accordion
+            type="single"
+            collapsible
+            value={accordionValue}
+            onValueChange={setAccordionValue}
+          >
             <AccordionItem value="item-1">
-              <AccordionTrigger>
+              <AccordionTrigger
+                className={`${accordionValue === "item-1" ? "pb-4" : "pb-0"}`}
+              >
                 <span className="flex items-center gap-3">
                   <Search />
                   フィルター検索
                 </span>
               </AccordionTrigger>
-              <AccordionContent className="flex flex-col gap-2">
-                <SelectYearMonth
-                  setYear={setYear}
-                  setMonth={setMonth}
-                />
+              <AccordionContent className="flex flex-col gap-2 pb-0">
+                <SelectYearMonth setYear={setYear} setMonth={setMonth} />
                 <Input
                   placeholder="キーワード検索"
                   value={searchKeyword}
@@ -208,21 +223,19 @@ export default function Home() {
             </AccordionItem>
           </Accordion>
         </div>
-        <TabsContent value="today" className="flex flex-col gap-4">
-          {applyFilters(todayTodo).map((todo) => (
-            <TodoCard key={todo.id} todo={todo} />
-          ))}
-        </TabsContent>
-        <TabsContent value="in_progress" className="flex flex-col gap-4">
-          {applyFilters(InProgressTodo).map((todo) => (
-            <TodoCard key={todo.id} todo={todo} />
-          ))}
-        </TabsContent>
-        <TabsContent value="todos" className="flex flex-col gap-4">
-          {applyFilters(todos).map((todo) => (
-            <TodoCard key={todo.id} todo={todo} />
-          ))}
-        </TabsContent>
+        {TODO_TABS.map((tab) => (
+          <TabsContent
+            key={tab.value}
+            value={tab.value}
+            className="flex flex-col gap-4"
+          >
+            {applyFilters(tab.data).map((todo) => (
+              <TodoSheet key={todo.id} todo={todo}>
+                <TodoCard key={todo.id} todo={todo} />
+              </TodoSheet>
+            ))}
+          </TabsContent>
+        ))}
       </Tabs>
     </div>
   );
