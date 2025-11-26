@@ -18,6 +18,7 @@ import { deleteTodo } from "@/app/server-action/todo/deleteTodo";
 import ConfirmDialog from "../common/dialog/ConfirmDialog";
 import { useState } from "react";
 import { useFetchTodos } from "@/hooks/todo/useFetchTodos";
+import Link from "next/link";
 
 interface TodoSheetProps {
   children: React.ReactNode;
@@ -108,7 +109,7 @@ const TodoSheet = ({ children, todo }: TodoSheetProps) => {
         <SheetFooter className="w-80 bg-slate-50 sticky bottom-0 right-0 -mx-4 -mb-4 ">
           <div className="flex gap-2 w-full">
             <Button variant={"secondary"} className="flex-1 bg-yellow-300">
-              編集
+              <Link href={`/todo/edit/${todo.id}`}>編集</Link>
             </Button>
             <ConfirmDialog
               open={confirmOpen}
