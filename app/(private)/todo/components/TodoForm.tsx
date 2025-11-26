@@ -1,3 +1,5 @@
+"use client";
+
 import { TodoWithRelations } from "@/app/atom/todo/todo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,9 +31,11 @@ import { updateTodo } from "@/app/server-action/todo/updateTodo";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
+import { createTodo } from "@/app/server-action/todo/createTodo";
+import { Priority, Status } from "@prisma/client";
 
 interface TodoFormProps {
-  editingTodo: TodoWithRelations;
+  editingTodo?: TodoWithRelations;
 }
 
 const TodoForm = ({ editingTodo }: TodoFormProps) => {
@@ -40,21 +44,23 @@ const TodoForm = ({ editingTodo }: TodoFormProps) => {
 
   const router = useRouter();
 
-  const defaultValues = {
-    todoId: editingTodo.id,
-    title: editingTodo.title,
-    summary: editingTodo.summary,
-    status: editingTodo.status,
-    startDate: editingTodo?.startDate
-      ? format(editingTodo.startDate, "yyyy-MM-dd")
-      : "",
-    endDate: editingTodo?.endDate
-      ? format(editingTodo.endDate, "yyyy-MM-dd")
-      : "",
-    priority: editingTodo.priority,
-    checklists: editingTodo.checklists,
-    memos: editingTodo.memos,
+  const defaultTodo: TodoWithRelations = {
+    id: crypto.randomUUID(),
+    title: '',
+    completed: false,
+    status: 'TODO' as Status,
+    startDate: null,
+    endDate: null,
+    priority: 'MEDIUM' as Priority,
+    summary: '',
+    userId: 'dammy-user-id',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    checklists: [],
+    memos: [],
   };
+
+  const todo = editingTodo ?? defaultTodo;
 
   const {
     register,
@@ -65,19 +71,37 @@ const TodoForm = ({ editingTodo }: TodoFormProps) => {
   } = useForm({
     resolver: zodResolver(todoSchema),
     mode: "onBlur",
-    defaultValues,
+    defaultValues: {
+      todoId: todo.id,
+      title: todo.title,
+      summary: todo.summary,
+      status: todo.status,
+      startDate: todo.startDate
+        ? format(new Date(todo.startDate), "yyyy-MM-dd")
+        : null,
+      endDate: todo.endDate
+        ? format(new Date(todo.endDate), "yyyy-MM-dd")
+        : null,
+      priority: todo.priority,
+      checklists: todo.checklists,
+      memos: todo.memos,
+    },
   });
 
   const onSubmit = async (data: TodoSchema) => {
     try {
-      const result = await updateTodo(data);
+      const result = editingTodo ? await updateTodo(data) : await createTodo(data);
+      console.log("Result:", result);
+      console.log(errors)
       if (result.success) {
-        toast.success("Todoが更新されました。");
+        toast.success(result.message);
         router.replace("/");
+      } else {
+        toast.error(result.message);
       }
     } catch (error) {
       console.error("Error updating todo:", error);
-      toast.error("Todoの更新に失敗しました。");
+      toast.error("予期しないエラーが発生しました");
     }
   };
 
@@ -122,7 +146,7 @@ const TodoForm = ({ editingTodo }: TodoFormProps) => {
             name="status"
             render={({ field }) => (
               <Select
-                defaultValue={editingTodo.status}
+                // defaultValue={editingTodo.status}
                 value={field.value}
                 onValueChange={field.onChange}
               >
@@ -147,7 +171,7 @@ const TodoForm = ({ editingTodo }: TodoFormProps) => {
             name="priority"
             render={({ field }) => (
               <Select
-                defaultValue={editingTodo.priority}
+                // defaultValue={editingTodo.priority}
                 value={field.value}
                 onValueChange={field.onChange}
               >
