@@ -39,11 +39,8 @@ export default function Home() {
     "ALL" | "true" | "false"
   >("ALL");
 
-  const date = new Date();
-  const [year, setYear] = useState<string>(date.getFullYear().toString());
-  const [month, setMonth] = useState<string>(
-    (date.getMonth() + 1).toString().padStart(2, "0")
-  );
+  const [year, setYear] = useState<string>("");
+  const [month, setMonth] = useState<string>("");
   const [searchKeyword, setSearchKeyword] = useState<string>("");
 
   const applyFilters = (todoList: TodoWithRelations[]) => {
@@ -76,7 +73,7 @@ export default function Home() {
       }
 
       // 年月フィルター(開始日 OR 終了日)
-      if (year && month) {
+      if (year !== "" && month !== "") {
         let matchesYearMonth = false;
 
         // 開始日をチェック
@@ -190,7 +187,7 @@ export default function Home() {
                 </span>
               </AccordionTrigger>
               <AccordionContent className="flex flex-col gap-2 pb-0">
-                <SelectYearMonth setYear={setYear} setMonth={setMonth} />
+                <SelectYearMonth setYear={setYear} setMonth={setMonth} year={year} month={month} />
                 <Input
                   placeholder="キーワード検索"
                   value={searchKeyword}

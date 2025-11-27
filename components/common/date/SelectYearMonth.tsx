@@ -11,13 +11,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 interface SelectYearMonthProps {
+  year: string;
+  month: string;
   setYear: Dispatch<SetStateAction<string>>;
   setMonth: Dispatch<SetStateAction<string>>;
 }
 
-const SelectYearMonth = ({ setYear, setMonth }: SelectYearMonthProps) => {
+const SelectYearMonth = ({ setYear, setMonth,year,month }: SelectYearMonthProps) => {
   const currentYear = new Date().getFullYear();
   // 今年から前後何年分表示するか
   const yearRange = 5;
@@ -28,7 +31,7 @@ const SelectYearMonth = ({ setYear, setMonth }: SelectYearMonthProps) => {
 
   return (
     <div className="flex items-center gap-1">
-      <Select onValueChange={(value) => setYear(value)}>
+      <Select value={year} onValueChange={(value) => setYear(value)}>
         <SelectTrigger className="w-[100px]">
           <SelectValue placeholder="年" />
         </SelectTrigger>
@@ -43,8 +46,8 @@ const SelectYearMonth = ({ setYear, setMonth }: SelectYearMonthProps) => {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <Select onValueChange={(value) => setMonth(value)}>
-        <SelectTrigger className="w-[70px]">
+      <Select disabled={!year} value={month} onValueChange={(value) => setMonth(value)}>
+        <SelectTrigger className="w-20">
           <SelectValue placeholder="月" />
         </SelectTrigger>
         <SelectContent>
@@ -62,6 +65,10 @@ const SelectYearMonth = ({ setYear, setMonth }: SelectYearMonthProps) => {
           </SelectGroup>
         </SelectContent>
       </Select>
+      <Button disabled={!year || !month} type="button" onClick={() => {
+        setYear("");
+        setMonth("");
+      }} variant={"outline"}>期間をリセット</Button>
     </div>
   );
 };

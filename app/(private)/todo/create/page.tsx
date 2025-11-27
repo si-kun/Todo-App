@@ -1,11 +1,7 @@
-import TodoForm from '../components/TodoForm'
+import TodoForm from "../components/TodoForm";
 
 const CreatePage = () => {
-  return (
-    <div>
-        <TodoForm />
-    </div>
-  )
-}
+  return <TodoForm />;
+};
 
-export default CreatePage
+export default CreatePage;
