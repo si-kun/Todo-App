@@ -1,5 +1,6 @@
 "use client";
 
+import { userAtom } from "@/app/atom/user/user";
 import { signin } from "@/app/server-action/auth/signin";
 import { signup } from "@/app/server-action/auth/signup";
 import { signinSchema, SigninSchemaType } from "@/app/types/zod/signinResolver";
@@ -16,12 +17,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSetAtom } from "jotai";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Resolver, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 const AuthForm = () => {
+
+  const setUser = useSetAtom(userAtom);
+
   const router = useRouter();
   const pathName = usePathname();
 
@@ -47,6 +52,7 @@ const AuthForm = () => {
           : await signin({ data: data as SigninSchemaType });
       if (result.success) {
         toast.success(result.message);
+        setUser(result.data);
         router.push("/");
       } else {
         toast.error(result.message);

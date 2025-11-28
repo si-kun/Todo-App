@@ -1,10 +1,8 @@
-import React from 'react'
-import AuthForm from '../components/AuthForm'
+import React from "react";
+import AuthForm from "../components/AuthForm";
 
 const SinginPage = () => {
-  return (
-    <AuthForm />
-  )
-}
+  return <AuthForm />;
+};
 
-export default SinginPage
+export default SinginPage;

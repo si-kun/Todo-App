@@ -20,6 +20,8 @@ import { Search } from "lucide-react";
 import SelectYearMonth from "@/components/common/date/SelectYearMonth";
 import { Input } from "@/components/ui/input";
 import TodoSheet from "@/components/todo/TodoSheet";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../atom/user/user";
 
 export interface FilterOption {
   label: string;
@@ -29,6 +31,10 @@ export interface FilterOption {
 export type FilterLabelOptions = Record<string, FilterOption[]>;
 
 export default function Home() {
+
+  const user = useAtomValue(userAtom)
+  console.log(user)
+
   const { fetchTodos, loading, todos } = useFetchTodos();
 
   const [accordionValue, setAccordionValue] = useState<string>("");

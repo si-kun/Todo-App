@@ -4,12 +4,13 @@ import { ApiResponse } from "@/app/types/api/api";
 import { SignupSchemaType } from "@/app/types/zod/signupResolver";
 import { prisma } from "@/lib/prisma/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { User } from "@prisma/client";
 
 interface SignupData {
     data: SignupSchemaType;
 }
 
-export const signup = async ({data}:SignupData):Promise<ApiResponse<null>> => {
+export const signup = async ({data}:SignupData):Promise<ApiResponse<User | null>> => {
 
     const supabase = await createClient();
 
@@ -34,13 +35,19 @@ export const signup = async ({data}:SignupData):Promise<ApiResponse<null>> => {
 
         try {
 
-            await prisma.user.create({
+            const newUser = await prisma.user.create({
                 data: {
                     id: supabaseAuth.data.user.id,
                     name: data.name,
                     email: data.email,
                 }
             })
+
+            return {
+                success: true,
+                message: "サインアップに成功しました",
+                data: newUser,
+            }
 
         } catch(prismaError) {
             console.error("Prisma User Creation Error:", prismaError);

@@ -2,10 +2,13 @@
 
 import { ApiResponse } from "@/app/types/api/api";
 import { TodoSchema } from "@/app/types/zod/todoResolver";
+import { requireAuth } from "@/lib/auth/getCurrentUser";
 import { prisma } from "@/lib/prisma/prisma";
 
 export const createTodo = async (data: TodoSchema): Promise<ApiResponse<null>> => {
     try {
+
+        const user = await requireAuth();
 
         await prisma.$transaction(async (prisma) => {
 
@@ -14,7 +17,7 @@ export const createTodo = async (data: TodoSchema): Promise<ApiResponse<null>> =
             // Todoの作成
             const todo = await prisma.todo.create({
                 data: {
-                    userId: "dammy-user-id",
+                    userId: user.id,
                     title,
                     summary,
                     status,

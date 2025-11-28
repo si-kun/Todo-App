@@ -2,13 +2,17 @@
 
 import { TodoWithRelations } from "@/app/atom/todo/todo";
 import { ApiResponse } from "@/app/types/api/api";
+import { requireAuth } from "@/lib/auth/getCurrentUser";
 import { prisma } from "@/lib/prisma/prisma";
 
 export const getAllTodo = async (): Promise<ApiResponse<TodoWithRelations[]>> => {
   try {
+
+    const user = await requireAuth();
+
     const response = await prisma.todo.findMany({
       where: {
-        userId: "dammy-user-id",
+        userId: user.id,
       },
       include: {
         checklists: true,
