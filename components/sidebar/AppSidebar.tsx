@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
+import LogoutButton from "./LogoutButton";
 
 const AppSidebar = () => {
   const { setOpenMobile } = useSidebar();
@@ -18,23 +19,7 @@ const AppSidebar = () => {
   const items = [
     {
       title: "Home",
-      url: "#",
-    },
-    {
-      title: "Inbox",
-      url: "#",
-    },
-    {
-      title: "Calendar",
-      url: "#",
-    },
-    {
-      title: "Search",
-      url: "#",
-    },
-    {
-      title: "Settings",
-      url: "#",
+      url: "/",
     },
   ];
   return (
@@ -67,6 +52,7 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <LogoutButton />
     </Sidebar>
   );
 };
